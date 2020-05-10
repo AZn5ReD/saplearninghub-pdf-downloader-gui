@@ -4,9 +4,10 @@ Download eBook from SAP Learning Hub using GUI
 
 ## Getting Started
 
-## Prerequisite
+## Prerequisites
 
-Having Google Chrome installed.
+- Google Chrome installed
+
 The path of chrome.exe should be put in `Chrome path`. These are the default paths depending on your os (they are set by default):
 
 - Windows : `C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`
@@ -29,6 +30,7 @@ The download URL of the eBook URL is on the learning hub:
 ![SAP Learning Hub](images/readme_SAP_LearningHub.png)
 
 Fill the `User` and `Password` inputs with your SUSER / SUSER_PASSWORD.
+Fill the `Target folder` input with the folder (use absolute path, see known bugs)
 
 ## Test
 
@@ -62,6 +64,11 @@ npx nodegui-packer --pack dist
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+## Knwon bugs
+
+- On download click, there is a new window of the GUI appearing. It represents the new child process created which download the file. If it gets closed, the download process will stop. It closes itself at the end of the download.
+- All file paths should be absolute path (relative paths don't work).
 
 ## Side notes
 
