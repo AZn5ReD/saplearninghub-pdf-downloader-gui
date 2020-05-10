@@ -13,15 +13,13 @@ import {
   QPlainTextEdit,
   QProgressBar,
   NodeLayout,
-  NodeWidget,
   QObjectSignals,
-  NodeObject,
-  QObject,
 } from "@nodegui/nodegui";
-
 import child_process from "child_process";
 
 interface UserInterface {
+  chrome: QLineEdit;
+  downloader: QLineEdit;
   link: QLineEdit;
   directory: QLineEdit;
   user: QLineEdit;
@@ -58,7 +56,7 @@ function createLayout(widget: QWidget) {
 function createWindow() {
   const win = new QMainWindow();
   win.setWindowTitle("SAP LearningHub PDF Downloader");
-  win.setMinimumSize(600, 400);
+  win.setMinimumSize(600, 600);
 
   const centralWidget = new QWidget();
   centralWidget.setObjectName("rootView");
@@ -120,7 +118,7 @@ function createDirectoryInput(
     `);
 
   const button = new QToolButton();
-  button.setIcon(new QIcon("./images/icon_directory.png"));
+  button.setIcon(new QIcon("./assets/icon_directory.png"));
   button.addEventListener("clicked", () => {
     const fileDialog = new QFileDialog();
     fileDialog.setFileMode(FileMode.Directory);
@@ -174,7 +172,15 @@ function createConsole(rootLayout: NodeLayout<QObjectSignals>) {
 function createDownloadButton(
   rootLayout: NodeLayout<QObjectSignals>,
   labelText: string,
-  { link, directory, user, password, progress }: UserInterface,
+  {
+    chrome,
+    downloader,
+    link,
+    directory,
+    user,
+    password,
+    progress,
+  }: UserInterface,
   log: QPlainTextEdit
 ) {
   const widget = createWidget(rootLayout);
@@ -189,12 +195,13 @@ function createDownloadButton(
   button.addEventListener("clicked", () => {
     button.setEnabled(false);
     const child = child_process.fork(
-      "./build/index.js",
+      downloader.text(),
       [
         `--url=${link.text()}`,
         `--login=${user.text()}`,
         `--password=${password.text()}`,
         `--target=${directory.text()}`,
+        `--chrome=${chrome.text()}`,
       ],
       {
         stdio: ["pipe", "pipe", "pipe", "ipc"],
@@ -228,20 +235,46 @@ function createDownloadButton(
   return button;
 }
 
+function createInputWithDefaultValue(
+  rootLayout: NodeLayout<QObjectSignals>,
+  labelText: string,
+  winValue: string,
+  unixValue: string
+) {
+  const input = createInput(rootLayout, labelText);
+  if (process.platform === "win32") {
+    input.setText(winValue);
+  } else {
+    input.setText(unixValue);
+  }
+  return input;
+}
+
 function main() {
   const { win, rootLayout } = createWindow();
+  const chrome = createInputWithDefaultValue(
+    rootLayout,
+    "Chrome path:",
+    "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+    "/usr/bin/google-chrome"
+  );
+  const downloader = createInputWithDefaultValue(
+    rootLayout,
+    "Downloader path:",
+    ".\\index.js",
+    "./index.js"
+  );
   const link = createInput(rootLayout, "Ebook link:");
   const directory = createDirectoryInput(rootLayout, "Target folder:");
   const user = createInput(rootLayout, "User:");
   const password = createInput(rootLayout, "Password:");
   password.setEchoMode(EchoMode.Password);
   const progress = createProgressBar(rootLayout);
-  // TODO Bundle puppeteer ?
   const log = createConsole(rootLayout);
   const downloadButton = createDownloadButton(
     rootLayout,
     "Download",
-    { link, directory, user, password, progress },
+    { chrome, downloader, link, directory, user, password, progress },
     log
   );
   win.show();
