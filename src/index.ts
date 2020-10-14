@@ -194,9 +194,10 @@ function createDownloadButton(
     `);
   button.addEventListener("clicked", () => {
     button.setEnabled(false);
-    const child = child_process.fork(
-      downloader.text(),
+    const child = child_process.spawn(
+      "node",
       [
+        downloader.text(),
         `--url=${link.text()}`,
         `--login=${user.text()}`,
         `--password=${password.text()}`,
@@ -205,6 +206,7 @@ function createDownloadButton(
       ],
       {
         stdio: ["pipe", "pipe", "pipe", "ipc"],
+        windowsHide: true,
       }
     );
 

@@ -67,7 +67,6 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## Knwon bugs
 
-- On download click, there is a new window of the GUI appearing. It represents the new child process created which download the file. If it gets closed, the download process will stop. It closes itself at the end of the download.
 - All file paths should be absolute path (relative paths don't work).
 
 ## Side notes
