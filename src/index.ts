@@ -197,6 +197,7 @@ function createDownloadButton(
     const child = child_process.spawn(
       "node",
       [
+        "--no-deprecation",
         downloader.text(),
         `--url=${link.text()}`,
         `--login=${user.text()}`,
