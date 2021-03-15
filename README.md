@@ -69,6 +69,7 @@ If you like the project, you can buy me a [coffee](https://paypal.me/azn5red).
 ## Knwon bugs
 
 - All file paths should be absolute path (relative paths don't work).
+- Connection issues should be open in the main repo
 
 ## Side notes
 
